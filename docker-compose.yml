@@ -2,7 +2,7 @@ services:
   seedance-studio:
     build: .
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - ./outputs:/app/outputs
     environment:
