@@ -2,7 +2,7 @@ services:
   seedance-studio:
     build: .
     ports:
-      - "80:80"
+      - "3000:3000"
     environment:
-      - PORT=80
+      - PORT=3000
     restart: unless-stopped
