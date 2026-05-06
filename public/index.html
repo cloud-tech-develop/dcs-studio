@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEEDANCE STUDIO · Dead Camera Studios</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="grain"></div>
+  <div class="scanlines"></div>
+
+  <!-- ═══ MASTHEAD ═══════════════════════════════════════════ -->
+  <header class="masthead">
+    <div class="brand">
+      <svg class="brand-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <rect x="3" y="3" width="94" height="94" rx="22" ry="22" fill="none" stroke="currentColor" stroke-width="6"/>
+        <g transform="translate(50, 50)">
+          <circle r="24" fill="none" stroke="currentColor" stroke-width="5"/>
+          <path d="M -17,-11 Q 0,-26 17,-11" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>
+          <circle r="8" fill="currentColor"/>
+        </g>
+      </svg>
+      <div class="brand-text">
+        <span class="brand-name">Dead Camera <em style="color:var(--signal-red)">//</em> Seedance Studio</span>
+        <span class="brand-subname">Studios <em>//</em> AI Research Lab</span>
+      </div>
+    </div>
+    <div class="status-strip">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">checking connection</span>
+
+      <button class="header-chip user-chip" id="userChip" title="Click to change">
+        <span class="chip-icon">👤</span>
+        <span class="chip-label" id="userChipLabel">no user</span>
+      </button>
+
+      <button class="header-chip scene-chip" id="sceneChip" title="Click to change scene">
+        <span class="chip-icon">🎬</span>
+        <span class="chip-label" id="sceneChipLabel">no scene</span>
+      </button>
+
+      <button class="header-chip export-chip" id="exportChip" title="Export rated clips for this scene" disabled>
+        <span class="chip-icon">📥</span>
+        <span class="chip-label">EXPORT</span>
+        <span class="chip-badge" id="exportCount">0</span>
+      </button>
+
+      <button class="keys-trigger no-key" id="keysTrigger">
+        <span class="key-icon">⚿</span>
+        <span>API</span>
+        <span class="key-name" id="activeKeyName">no key</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ═══ SESSION MODAL (welcome / scene picker) ═════════════ -->
+  <div class="session-modal" id="sessionModal">
+    <div class="session-modal-panel">
+      <div class="session-modal-header">
+        <div class="session-modal-title">
+          <span class="num">⚙</span>
+          <span>SESSION SETUP</span>
+        </div>
+        <button class="session-modal-close" id="sessionModalClose" hidden>CLOSE ✕</button>
+      </div>
+      <div class="session-modal-body">
+        <p class="session-modal-intro">
+          Tag this session so we can build a clean export later.
+          Your name persists; the scene info you can update at any time from the header.
+        </p>
+
+        <div class="session-field">
+          <label>Your name <span class="req">*</span></label>
+          <input type="text" id="sessionNameInput" placeholder="e.g. Alejo, Sofia, etc." spellcheck="false" />
+        </div>
+
+        <div class="session-field">
+          <label>Project <span class="req">*</span></label>
+          <input type="text" id="sessionProjectInput" placeholder="e.g. Swipe Right" spellcheck="false" />
+        </div>
+
+        <div class="session-field-row">
+          <div class="session-field">
+            <label>Scene <span class="req">*</span></label>
+            <input type="text" id="sessionSceneInput" placeholder="e.g. 21 — INT. Manager's Office" spellcheck="false" />
+          </div>
+          <div class="session-field">
+            <label>Beat <span class="opt">(opt.)</span></label>
+            <input type="text" id="sessionBeatInput" placeholder="e.g. 03" spellcheck="false" />
+          </div>
+        </div>
+
+        <div class="session-field">
+          <label>Notes <span class="opt">(opt.)</span></label>
+          <textarea id="sessionNotesInput" placeholder="Director notes, brief context, anything that helps your future self..." rows="2"></textarea>
+        </div>
+
+        <button class="session-confirm-btn" id="sessionConfirmBtn">
+          <span>START SESSION</span>
+          <span class="btn-arrow">→</span>
+        </button>
+
+        <div class="session-modal-help">
+          You can change scene/beat mid-session by clicking the 🎬 chip in the header.
+          Each rated clip ≥ 3 stars is saved to the scene log automatically.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ KEYS MODAL ═══════════════════════════════════════ -->
+  <div class="keys-modal" id="keysModal">
+    <div class="keys-modal-panel">
+      <div class="keys-modal-header">
+        <div class="keys-modal-title">
+          <span class="num">⚿</span>
+          <span>API Keys</span>
+        </div>
+        <button class="keys-modal-close" id="keysModalClose">CLOSE ✕</button>
+      </div>
+      <div class="keys-modal-body">
+        <div class="keys-list" id="keysList">
+          <div class="keys-empty">No keys yet — add one below to start.</div>
+        </div>
+
+        <div class="key-add-form">
+          <div class="key-add-form-title">▸ ADD NEW KEY</div>
+          <input
+            type="text"
+            class="key-input"
+            id="keyNameInput"
+            placeholder="Nickname (e.g. account-1, weekly-pool, sofia-budget)"
+          />
+          <input
+            type="password"
+            class="key-input"
+            id="keyValueInput"
+            placeholder="Paste your API key here"
+          />
+          <select class="key-input" id="keyEndpointSelect">
+            <option value="byteplus_ap" selected>BytePlus · Singapore (default)</option>
+            <option value="volcengine_cn">Volcengine · China (cn-beijing)</option>
+          </select>
+
+          <details class="key-aksk-details">
+            <summary>⬢ Optional: AK/SK for Assets API (Private Library)</summary>
+            <div class="key-aksk-fields">
+              <input
+                type="text"
+                class="key-input"
+                id="keyAkInput"
+                placeholder="Access Key (AK) — starts with AKLT…"
+                spellcheck="false"
+              />
+              <input
+                type="password"
+                class="key-input"
+                id="keySkInput"
+                placeholder="Secret Key (SK) — keep secret"
+                spellcheck="false"
+              />
+              <div class="key-aksk-help">
+                Generate at <a href="https://console.byteplus.com/iam/keymanage" target="_blank">BytePlus Console → IAM → API Access Key ↗</a>.
+                Required only for the Private Trusted Library (invitation-only).
+              </div>
+            </div>
+          </details>
+
+          <button class="key-add-btn" id="keyAddBtn">+ ADD KEY</button>
+          <div class="key-add-help">
+            Most users pick <strong>BytePlus · Singapore</strong> — the international platform.
+            <br />
+            Pick Volcengine only if your account is on the Chinese console.
+            <br />
+            Keys persist locally in <code>keys.json</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ SLOGAN HERO ═══════════════════════════════════════ -->
+  <div class="slogan-bar">
+    <div class="slogan">
+      <span class="strikethrough">LIGHTS,</span>
+      <span class="strikethrough">CAMERA,</span>
+      <span class="vision">Vision</span>
+      <span>ACTION.</span>
+    </div>
+    <div class="tagline">
+      Reinvented Cinema.<br />
+      <strong>Absolute Creative Control.</strong>
+    </div>
+  </div>
+
+  <!-- ═══ STAGE ═════════════════════════════════════════════ -->
+  <main class="stage-v2">
+
+    <!-- ═══ ROW 1 · VIEWER (full-width primary focus) ═══════════ -->
+    <section class="viewer-zone">
+      <div class="panel-header">
+        <span class="panel-num">01</span>
+        <span class="panel-title">Viewer</span>
+        <span class="panel-hint">Final clip · evaluate quality, lip sync, sound, color</span>
+      </div>
+      <div class="viewer-frame" id="viewerFrame">
+        <div class="viewer-empty">
+          <div class="viewer-marks">
+            <span>●</span><span>●</span><span>●</span><span>●</span>
+          </div>
+          <p>No clip loaded</p>
+          <small>Generated output appears here</small>
+        </div>
+      </div>
+
+      <!-- Rating widget — only shown when a clip is loaded -->
+      <div class="rating-widget" id="ratingWidget" hidden>
+        <div class="rating-row">
+          <div class="rating-stars" id="ratingStars">
+            <button class="star" data-rating="1" title="Failed take">★</button>
+            <button class="star" data-rating="2" title="Below standard">★</button>
+            <button class="star" data-rating="3" title="Partial use (saves to log)">★</button>
+            <button class="star" data-rating="4" title="80% — strong take">★</button>
+            <button class="star" data-rating="5" title="Perfect — final take">★</button>
+          </div>
+          <input
+            type="text"
+            class="rating-notes"
+            id="ratingNotes"
+            placeholder="Notes on this take (optional)…"
+            spellcheck="false"
+          />
+          <span class="rating-status" id="ratingStatus"></span>
+        </div>
+        <div class="rating-help">
+          ★★★ saves to scene log · ★★★★ strong · ★★★★★ final take
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ ROW 2 · PROMPT BUILDER (left) + SESSION REEL (right) ═ -->
+    <section class="builder-zone">
+      <div class="builder-main">
+        <div class="panel-header">
+          <span class="panel-num">02</span>
+          <span class="panel-title">Prompt builder</span>
+          <span class="panel-hint">Describe the scene · the cinematographic style is injected automatically</span>
+        </div>
+        <textarea
+        id="userPrompt"
+        placeholder="Describe la escena. Sé específico: sujeto, acción, setting, atmósfera. El lenguaje cinematográfico se inyecta automáticamente desde tus selecciones."
+      ></textarea>
+        <div class="prompt-preview">
+        <div class="preview-header">
+          <span>▼ COMPILED PROMPT</span>
+          <span class="muted" id="charCount">0 chars</span>
+        </div>
+        <pre id="compiledPrompt">—</pre>
+      </div>
+        <button class="generate-btn" id="generateBtn">
+        <span class="btn-label">GENERATE</span>
+        <span class="btn-arrow">→</span>
+      </button>
+        <div class="status-log" id="statusLog"></div>
+      </div>
+
+      <aside class="builder-reel">
+        <div class="panel-header">
+          <span class="panel-num">·</span>
+          <span class="panel-title">Session reel</span>
+        </div>
+        <div class="reel" id="reel">
+        <div class="panel-subhead">Session reel</div>
+        <div class="reel-empty">Your generated clips will stack here</div>
+      </div>
+      </aside>
+    </section>
+
+    <!-- ═══ ROW 3 · CINEMATOGRAPHY · OUTPUT · CHARACTER STUDIO ═══ -->
+    <section class="settings-zone">
+
+      <div class="settings-col settings-cinematography">
+        <div class="panel-header">
+        <span class="panel-num">03</span>
+        <span class="panel-title">Cinematography</span>
+      </div>
+
+      <div class="control-group" data-key="lens">
+        <label>Lens</label>
+        <div class="chip-row" id="lensChips"></div>
+      </div>
+
+      <div class="control-group" data-key="camera">
+        <label>Camera body</label>
+        <div class="chip-row" id="cameraChips"></div>
+      </div>
+
+      <div class="control-group" data-key="cameraMotion">
+        <label>Camera motion</label>
+        <div class="chip-row" id="motionChips"></div>
+      </div>
+
+      <div class="control-group" data-key="colorGrading">
+        <label>Color grading</label>
+        <div class="chip-row" id="gradeChips"></div>
+      </div>
+
+      <div class="control-group" data-key="genre">
+        <label>Genre</label>
+        <div class="chip-row" id="genreChips"></div>
+      </div>
+      </div>
+
+      <div class="settings-col settings-output">
+        <div class="panel-header">
+        <span class="panel-num">04</span>
+        <span class="panel-title">Output format</span>
+      </div>
+
+      <div class="control-group" data-key="aspectRatio">
+        <label>Aspect ratio</label>
+        <div class="chip-row" id="ratioChips"></div>
+      </div>
+
+      <div class="control-group" data-key="resolution">
+        <label>Resolution</label>
+        <div class="chip-row" id="resChips"></div>
+      </div>
+
+      <div class="control-group">
+        <label>Duration <span class="muted" id="durationLabel">5s</span></label>
+        <input type="range" id="durationSlider" min="4" max="15" step="1" value="5" />
+        <div class="slider-ticks">
+          <span>4s</span><span>8s</span><span>12s</span><span>15s</span>
+        </div>
+      </div>
+
+      <div class="control-group control-inline">
+        <label>Sound</label>
+        <div class="toggle" id="soundToggle" data-on="true">
+          <span class="toggle-knob"></span>
+          <span class="toggle-label-on">ON</span>
+          <span class="toggle-label-off">OFF</span>
+        </div>
+      </div>
+
+      <div class="control-group control-inline">
+        <label>Engine</label>
+        <div class="toggle toggle-wide" id="modelToggle" data-model="fast">
+          <span class="toggle-opt toggle-opt-active">FAST</span>
+          <span class="toggle-opt">PRO</span>
+        </div>
+      </div>
+      </div>
+
+      <div class="settings-col settings-character">
+        <div class="panel-header">
+          <span class="panel-num">05</span>
+          <span class="panel-title">Character &amp; Assets</span>
+        </div>
+        <div class="character-studio">
+        <div class="char-header">
+          <span class="char-title">⚙ Character Studio</span>
+          <span class="char-subtitle">Generate trusted reference images · powered by Seedream</span>
+          <button class="char-toggle" id="charToggleBtn" aria-expanded="false">▾</button>
+        </div>
+
+        <div class="char-body" id="charBody" hidden>
+          <div class="char-explainer">
+            Seedance blocks images with real human faces. Solution: generate them here with Seedream.
+            <br />
+            Output is automatically <strong class="trusted-tag">TRUSTED ✓</strong> for 30 days under your account.
+          </div>
+
+          <textarea
+            class="char-prompt"
+            id="charPrompt"
+            placeholder="Describe your character. e.g. 'A young blonde woman in her mid-twenties, long straight hair, leather jacket over a yellow polo shirt, blue jeans, white sneakers. Studio portrait, neutral expression, eye-level shot, white background.'"
+          ></textarea>
+
+          <div class="char-controls">
+            <div class="char-control">
+              <label>Model</label>
+              <select id="charModelSelect">
+                <option value="seedream-4-0-250828">Seedream 4.0</option>
+                <option value="seedream-5-0-260128" selected>Seedream 5.0</option>
+              </select>
+            </div>
+            <div class="char-control">
+              <label>Size</label>
+              <select id="charSizeSelect">
+                <option value="1K">1K</option>
+                <option value="2K" selected>2K</option>
+                <option value="4K">4K</option>
+              </select>
+            </div>
+            <div class="char-control">
+              <label>Seed <span class="char-help-inline" title="Same seed + same prompt = same face. Leave empty for random.">(?)</span></label>
+              <input type="number" id="charSeedInput" placeholder="random" min="0" />
+            </div>
+            <button class="char-generate-btn" id="charGenerateBtn">
+              <span>+ GENERATE IMAGE</span>
+            </button>
+          </div>
+
+          <div class="char-status" id="charStatus"></div>
+
+          <div class="char-results">
+            <div class="char-results-header">
+              <span class="panel-subhead">Trusted assets · this session</span>
+              <span class="muted" id="charAssetsCount">0</span>
+            </div>
+            <div class="char-results-grid" id="charResultsGrid">
+              <div class="char-results-empty">No images generated yet. Generate one to start.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+        <!-- ─── MY ASSETS (BytePlus Private Library) ─── -->
+        <div class="assets-library">
+          <div class="lib-header">
+            <span class="lib-title">⬢ My Assets</span>
+            <span class="lib-subtitle">Private trusted library · BytePlus</span>
+            <button class="lib-toggle" id="libToggleBtn" aria-expanded="false">▾</button>
+          </div>
+
+          <div class="lib-body" id="libBody" hidden>
+            <div class="lib-explainer">
+              Upload images via public URL · BytePlus stores them as private trusted assets.
+              <br />
+              Once Active, they bypass the face filter for that account. <strong class="amber-tag">PRIVATE ✓</strong> for invitation-only users.
+            </div>
+
+            <div class="lib-noaksk" id="libNoAkSk" hidden>
+              ⚠ This key has no AK/SK configured. Add them in the API panel to use the Assets Library.
+            </div>
+
+            <div class="lib-section">
+              <div class="lib-section-header">
+                <span class="lib-section-title">Asset Group</span>
+                <select id="libGroupSelect" class="lib-input">
+                  <option value="">— select / create —</option>
+                </select>
+                <button class="lib-newgroup-btn" id="libNewGroupBtn" title="Create new group">+ NEW</button>
+              </div>
+            </div>
+
+            <div class="lib-section">
+              <div class="lib-section-title">Upload new asset</div>
+              <input
+                type="text"
+                class="lib-input"
+                id="libAssetUrl"
+                placeholder="Public image URL (Drive, Imgur, Dropbox direct link)…"
+                spellcheck="false"
+              />
+              <input
+                type="text"
+                class="lib-input"
+                id="libAssetName"
+                placeholder="Asset name (optional, e.g. dixie_fullbody_v1)"
+                spellcheck="false"
+              />
+              <div class="lib-controls-row">
+                <label class="lib-checkbox" title="Skip Pre-filter — REQUIRES Secure Mode OFF in console (irreversible)">
+                  <input type="checkbox" id="libSkipModeration" />
+                  <span>Skip moderation (Secure Mode off)</span>
+                </label>
+                <button class="lib-upload-btn" id="libUploadBtn">+ UPLOAD</button>
+              </div>
+            </div>
+
+            <div class="lib-status" id="libStatus"></div>
+
+            <div class="lib-section">
+              <div class="lib-section-header">
+                <span class="lib-section-title">Trusted assets</span>
+                <span class="muted" id="libAssetCount">0</span>
+                <button class="lib-refresh-btn" id="libRefreshBtn" title="Refresh from BytePlus">↻</button>
+              </div>
+              <div class="lib-grid" id="libGrid">
+                <div class="lib-grid-empty">No assets yet. Select a group + upload an image.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+                <div class="assets-section">
+        <div class="assets-header">
+          <span class="assets-title">▸ Reference assets</span>
+          <span class="assets-counter" id="assetsCounter">0 assets</span>
+        </div>
+
+        <!-- First/Last frame slots -->
+        <div class="frame-slots">
+          <div class="frame-slot" id="firstFrameSlot" data-slot="firstFrame">
+            <div class="frame-slot-tag">FIRST FRAME</div>
+            <div class="frame-slot-empty">
+              <div class="frame-slot-icon">+</div>
+              <div class="frame-slot-label">Drop or click</div>
+            </div>
+            <button class="frame-slot-remove" data-slot="firstFrame">✕</button>
+            <input type="file" accept="image/*" hidden data-slot="firstFrame" />
+          </div>
+          <div class="frame-slot" id="lastFrameSlot" data-slot="lastFrame">
+            <div class="frame-slot-tag">LAST FRAME</div>
+            <div class="frame-slot-empty">
+              <div class="frame-slot-icon">+</div>
+              <div class="frame-slot-label">Drop or click</div>
+            </div>
+            <button class="frame-slot-remove" data-slot="lastFrame">✕</button>
+            <input type="file" accept="image/*" hidden data-slot="lastFrame" />
+          </div>
+        </div>
+
+        <!-- Multi-ref grid -->
+        <div class="multiref-grid" id="multirefGrid">
+          <button class="multiref-add" id="multirefAddBtn" title="Add reference (image / video / audio)">+</button>
+        </div>
+
+        <input type="file" id="multirefInput" accept="image/*,video/*,audio/*" multiple hidden />
+
+        <div class="assets-help">
+          Reference them in your prompt as <code>Image 1</code>, <code>Video 1</code>, <code>Audio 1</code>...
+          Click any tag below a thumbnail to insert it into the prompt.
+        </div>
+      </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ═══ FOOTER ════════════════════════════════════════════ -->
+  <footer class="footerbar">
+    <span>Seedance Studio <em>//</em> v1.0 <em>·</em> assets library</span>
+    <span class="muted">The Electric Mind <em>·</em> Somos Dead Camera Studios</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

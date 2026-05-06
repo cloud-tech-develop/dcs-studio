@@ -1,0 +1,15 @@
+node_modules/
+npm-debug.log*
+.env
+keys.json
+outputs/
+.DS_Store
+seedance-prompts.xlsx
+import_presets.py
+import-presets.bat
+import-presets.sh
+setup.bat
+start.bat
+start.sh
+README.md
+AGENTS.md

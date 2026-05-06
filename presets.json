@@ -1,0 +1,152 @@
+{
+  "_comment": "Dead Camera Studios · Seedance Studio · Preset library. Cada 'prompt' es texto cinematográfico inyectado al prompt final. Los grades están calibrados al DNA visual de las 4 películas de referencia de DCS.",
+  "lens": [
+    {
+      "id": "wide_24mm",
+      "label": "24mm Wide",
+      "prompt": "shot on a 24mm wide lens, expansive framing with subtle edge distortion, deep depth of field"
+    },
+    {
+      "id": "classic_35mm",
+      "label": "35mm Classic",
+      "prompt": "shot on a 35mm lens, natural human perspective, balanced framing, classic cinema feel"
+    },
+    {
+      "id": "portrait_50mm",
+      "label": "50mm Portrait",
+      "prompt": "shot on a 50mm lens, intimate perspective, clean subject isolation, natural compression"
+    },
+    {
+      "id": "tele_85mm",
+      "label": "85mm Tele",
+      "prompt": "shot on an 85mm lens, creamy shallow depth of field, compressed background, cinematic bokeh"
+    }
+  ],
+  "camera": [
+    {
+      "id": "arri_alexa",
+      "label": "Arri Alexa 65",
+      "prompt": "captured on Arri Alexa 65, rich dynamic range, organic highlight rolloff, filmic skin tones"
+    },
+    {
+      "id": "red_komodo",
+      "label": "Red Komodo 6K",
+      "prompt": "captured on Red Komodo 6K, crisp detail, deep contrast, modern digital clarity"
+    },
+    {
+      "id": "sony_venice",
+      "label": "Sony Venice",
+      "prompt": "captured on Sony Venice, cinematic wide gamut, smooth highlight handling, premium color science"
+    },
+    {
+      "id": "film_16mm",
+      "label": "16mm Film",
+      "prompt": "shot on 16mm celluloid film, visible grain structure, slight halation, analog imperfection and warmth"
+    }
+  ],
+  "colorGrading": [
+    {
+      "id": "blade_runner_2049",
+      "label": "Blade Runner 2049",
+      "prompt": "Blade Runner 2049 grade, tungsten-amber smog atmosphere, neon-soaked pollution haze, deep orange-to-black gradient skies, crushed blacks with detail retained in shadows, high micro-contrast, volumetric god-rays cutting through dust, Deakins-inspired dystopian futurism, muted cyan accents in metal and glass, saturated amber dominant highlights"
+    },
+    {
+      "id": "the_matrix",
+      "label": "The Matrix",
+      "prompt": "The Matrix grade, green-phosphor CRT wash over entire frame, monochromatic digital-rain cast, sickly fluorescent green midtones, crushed blacks with no warm tones, desaturated skin tones pushed toward algae-green, cold sterile digital-world palette, slight chromatic fringing, contrasty simulation aesthetic, every highlight tinted emerald-lime"
+    },
+    {
+      "id": "gone_girl",
+      "label": "Gone Girl",
+      "prompt": "Gone Girl grade, Fincher teal-green underexposure, clinical desaturated palette, muted skin tones pulled cold, shadows crushed to near-black with subtle cyan lift, yellow-green cast in highlights, surgical flat contrast, Jeff Cronenweth-inspired restraint, ugly-beautiful suburban menace, low-saturation controlled color space"
+    },
+    {
+      "id": "interstellar",
+      "label": "Interstellar",
+      "prompt": "Interstellar grade, Hoyte van Hoytema naturalism, cold blue deep-space void contrasted with warm amber practical lights, corn-field golden-hour warmth, IMAX 65mm texture, crushed blacks with filmic grain, skin tones honest and slightly warm, awe-inducing negative space, halation around light sources, reverent cosmic atmosphere"
+    }
+  ],
+  "cameraMotion": [
+    {
+      "id": "static_lockoff",
+      "label": "Static Lock-off",
+      "prompt": "camera remains completely static and locked-off throughout, no tracking, no shake, no push-in, the frame is fixed, only subjects inside the frame move"
+    },
+    {
+      "id": "slow_dolly_in",
+      "label": "Slow Dolly-in",
+      "prompt": "slow deliberate dolly-in toward the subject, smooth mechanical motion, tension building as the frame compresses, no handheld shake"
+    },
+    {
+      "id": "orbit",
+      "label": "Orbit",
+      "prompt": "smooth continuous orbit around the subject, steady arc motion maintaining consistent distance, revealing spatial context, gimbal-stabilized"
+    },
+    {
+      "id": "handheld",
+      "label": "Handheld",
+      "prompt": "handheld camera with organic subtle shake, human breathing rhythm, slight micro-adjustments in framing, verité documentary energy"
+    }
+  ],
+  "genre": [
+    {
+      "id": "drama",
+      "label": "Drama",
+      "prompt": "dramatic cinematic atmosphere, emotional weight in composition, deliberate pacing, restrained performance focus"
+    },
+    {
+      "id": "action",
+      "label": "Action",
+      "prompt": "kinetic action energy, dynamic composition, heightened physicality, urgent visual rhythm"
+    },
+    {
+      "id": "noir",
+      "label": "Noir",
+      "prompt": "neo-noir atmosphere, hard shadows, chiaroscuro lighting, morally ambiguous mood, rain-slicked surfaces and reflective darkness"
+    },
+    {
+      "id": "horror",
+      "label": "Horror",
+      "prompt": "horror atmosphere, oppressive dread, negative space used as threat, unnatural stillness, dim underexposed ambience"
+    }
+  ],
+  "aspectRatio": [
+    {
+      "id": "16:9",
+      "label": "16:9",
+      "value": "16:9"
+    },
+    {
+      "id": "9:16",
+      "label": "9:16",
+      "value": "9:16"
+    },
+    {
+      "id": "21:9",
+      "label": "21:9",
+      "value": "21:9"
+    },
+    {
+      "id": "1:1",
+      "label": "1:1",
+      "value": "1:1"
+    }
+  ],
+  "resolution": [
+    {
+      "id": "480p",
+      "label": "480p",
+      "value": "480p"
+    },
+    {
+      "id": "720p",
+      "label": "720p",
+      "value": "720p"
+    },
+    {
+      "id": "1080p",
+      "label": "1080p",
+      "value": "1080p"
+    }
+  ]
+}
