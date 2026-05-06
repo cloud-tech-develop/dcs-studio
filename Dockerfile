@@ -10,8 +10,8 @@ COPY server.js byteplus-signer.js presets.json .env.example ./
 COPY public/ public/
 
 ENV NODE_ENV=production
-ENV PORT=80
+ENV PORT=3300
 
-EXPOSE 3000
+EXPOSE 3300
 
 CMD ["node", "server.js"]

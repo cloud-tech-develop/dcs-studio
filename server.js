@@ -23,7 +23,7 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/outputs', express.static(path.join(__dirname, 'outputs')));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3300;
 // Catálogo de endpoints — cada API key se asocia a uno
 // (BytePlus y Volcengine son cuentas separadas con dominios distintos)
 const ENDPOINTS = {

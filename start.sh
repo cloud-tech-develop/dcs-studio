@@ -36,7 +36,7 @@ fi
 
 # ─── Open browser after delay ───────────────────────────────────
 echo ""
-echo "  [...]  Launching server on http://localhost:3000"
+echo "  [...]  Launching server on http://localhost:3300"
 echo "  [...]  Opening browser in 3 seconds..."
 echo ""
 echo "  ------------------------------------------------------------"
@@ -47,9 +47,9 @@ echo ""
 (
   sleep 3
   if command -v open >/dev/null 2>&1; then
-    open "http://localhost:3000"          # macOS
+    open "http://localhost:3300"          # macOS
   elif command -v xdg-open >/dev/null 2>&1; then
-    xdg-open "http://localhost:3000"      # Linux
+    xdg-open "http://localhost:3300"      # Linux
   fi
 ) &
 

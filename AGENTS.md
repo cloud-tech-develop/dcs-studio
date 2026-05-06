@@ -8,7 +8,7 @@ Single-file Express backend (`server.js`) serving static frontend from `public/`
 
 | Command | What it does |
 |---|---|
-| `npm start` | Start server on port 3000 |
+| `npm start` | Start server on port 3300 |
 | `npm run dev` | Start with `node --watch` (auto-reload) |
 | `node server.js` | Same as start |
 

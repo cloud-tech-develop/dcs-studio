@@ -13,7 +13,7 @@ Motor propio de generación cinematográfica construido sobre **BytePlus ModelAr
 
 ### Atajo (Windows): doble click en `start.bat`
 
-Ese script verifica que tengas Node.js, instala dependencias si es la primera vez, levanta el server, y abre el navegador en `http://localhost:3000` automáticamente. Para macOS/Linux usa `./start.sh`.
+Ese script verifica que tengas Node.js, instala dependencias si es la primera vez, levanta el server, y abre el navegador en `http://localhost:3300` automáticamente. Para macOS/Linux usa `./start.sh`.
 
 ### O manualmente
 
@@ -29,7 +29,7 @@ npm install
 npm start
 ```
 
-**3. Abre [http://localhost:3000](http://localhost:3000) y agrega tu API key desde el panel `⚿ API` en la esquina superior derecha** 🎬
+**3. Abre [http://localhost:3300](http://localhost:3300) y agrega tu API key desde el panel `⚿ API` en la esquina superior derecha** 🎬
 
 > Las keys se guardan en `./keys.json` (excluido de git). Puedes agregar varias y alternar entre ellas con un click — útil cuando tienes varias cuentas o llegas al límite semanal de créditos.
 
@@ -45,7 +45,7 @@ O sin compose:
 
 ```bash
 docker build -t seedance-studio .
-docker run -d -p 3000:3000 --name seedance seedance-studio
+docker run -d -p 3300:3300 --name seedance seedance-studio
 ```
 
 O con compose:

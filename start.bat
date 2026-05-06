@@ -67,7 +67,7 @@ if not exist "node_modules" (
 
 REM ─── Open browser after a short delay ──────────────────────────
 echo.
-echo  [...]  Launching server on http://localhost:3000
+echo  [...]  Launching server on http://localhost:3300
 echo  [...]  Browser will open automatically in 3 seconds.
 echo.
 echo  ------------------------------------------------------------
@@ -76,7 +76,7 @@ echo  ------------------------------------------------------------
 echo.
 
 REM Open browser in 3 seconds (in background) so the server has time to bind
-start "" /b cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:3000"
+start "" /b cmd /c "timeout /t 3 /nobreak >nul && start http://localhost:3300"
 
 REM ─── Start the server (this blocks until you Ctrl+C) ───────────
 call npm start
