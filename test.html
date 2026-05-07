@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Image Upload Test</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    h2 {
+      margin-top: 2em;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .1);
+    }
+
+    .card h3 {
+      margin: 0 0 12px;
+    }
+
+    input,
+    button {
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+
+    button {
+      cursor: pointer;
+      background: #0066cc;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: not-allowed;
+    }
+
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 12px;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 13px;
+      white-space: pre-wrap;
+    }
+
+    .success {
+      color: #16a34a;
+    }
+
+    .error {
+      color: #dc2626;
+    }
+
+    #gallery img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .thumb-wrap {
+      position: relative;
+    }
+
+    .thumb-wrap .del {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #dc2626;
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 22px;
+      text-align: center;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 60px;
+      font-family: monospace;
+      font-size: 13px;
+      padding: 8px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 4px;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .row input,
+    .row textarea {
+      flex: 1;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🖼️ Image Upload Test</h1>
+  <p>Base URL: <input id="baseUrl" value="http://localhost:8080" size="30" style="font-family:monospace"></p>
+
+  <!-- Multipart -->
+  <div class="card">
+    <h3>📁 Multipart upload</h3>
+    <input type="file" id="fileInput" accept="image/*">
+    <button id="btnMultipart">Upload</button>
+  </div>
+
+  <!-- Base64 -->
+  <div class="card">
+    <h3>🔤 Base64 upload</h3>
+    <input type="file" id="fileInputB64" accept="image/*">
+    <div class="row">
+      <div style="flex:1"><label>Filename</label><input id="b64Filename" placeholder="imagen.png" style="width:100%">
+      </div>
+    </div>
+    <label>Base64 data</label>
+    <textarea id="b64Data" placeholder="data:image/png;base64,... o base64 crudo"></textarea>
+    <button id="btnBase64">Upload</button>
+  </div>
+
+  <!-- Response -->
+  <div class="card">
+    <h3>📡 Response</h3>
+    <pre id="response">Esperando...</pre>
+  </div>
+
+  <!-- Gallery -->
+  <div class="card">
+    <h3>🖼️ Gallery</h3>
+    <button id="btnRefresh" style="margin-bottom:12px">Refresh</button>
+    <div id="gallery"></div>
+  </div>
+
+  <script>
+    const base = () => document.getElementById('baseUrl').value.replace(/\/+$/, '');
+    const resp = (ok, data) => {
+      const el = document.getElementById('response');
+      el.className = ok ? 'success' : 'error';
+      el.textContent = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+    };
+
+    // Multipart
+    document.getElementById('btnMultipart').onclick = async (ev) => {
+      ev.preventDefault();
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return resp(false, 'Select a file first');
+
+      const fd = new FormData();
+      fd.append('image', file);
+
+      try {
+        const r = await fetch(`${base()}/api/v1/images/upload`, { method: 'POST', body: fd });
+        const data = await r.json();
+        resp(r.ok, data);
+      } catch (e) { resp(false, e.message); }
+    };
+
+    // Base64 – leer file como base64
+    document.getElementById('fileInputB64').onchange = () => {
+      const file = document.getElementById('fileInputB64').files[0];
+      if (!file) return;
+      document.getElementById('b64Filename').value = file.name;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('b64Data').value = reader.result;
+      };
+      reader.readAsDataURL(file);
+    };
+
+    document.getElementById('btnBase64').onclick = async (ev) => {
+      ev.preventDefault();
+      const filename = document.getElementById('b64Filename').value.trim();
+      const data = document.getElementById('b64Data').value.trim();
+      if (!filename || !data) return resp(false, 'Fill filename and base64 data');
+
+      try {
+        const r = await fetch(`${base()}/api/v1/images/upload`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ filename, data }),
+        });
+        const json = await r.json();
+        resp(r.ok, json);
+      } catch (e) { resp(false, e.message); }
+    };
+
+    // Gallery
+    async function refreshGallery() {
+      const el = document.getElementById('gallery');
+      try {
+        const r = await fetch(`${base()}/api/v1/images/list`);
+        if (!r.ok) return;
+        const list = await r.json();
+        el.innerHTML = list.map(f => `
+      <div class="thumb-wrap">
+        <img src="${f.thumbnail_url}" alt="${f.filename}" onclick="window.open('${f.url}')">
+        <button class="del" onclick="deleteImage('${f.filename}')">✕</button>
+      </div>
+    `).join('');
+      } catch (_) { }
+    }
+
+    async function deleteImage(filename) {
+      try {
+        await fetch(`${base()}/api/v1/images/${filename}`, { method: 'DELETE' });
+        refreshGallery();
+      } catch (_) { }
+    }
+
+    document.getElementById('btnRefresh').onclick = refreshGallery;
+    refreshGallery();
+  </script>
+</body>
+
+</html>
